@@ -1,0 +1,51 @@
+body {
+	width: 36em;
+	margin: 0 auto;
+	position: relative;
+	background: #202020;
+	color: #c0c0c0;
+	font-family: 'Segoe UI', sans-serif;
+}
+h1 {
+	text-align: right;
+	font-size: 2em;
+	margin: 0;
+	padding: 0.25em;
+}
+table {
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+}
+th, td {
+	border: 1px solid #808080;
+	padding: 0.25em;
+}
+th {
+	text-align: left;
+}
+td {
+	text-align: right;
+	font-family: 'Consolas', monospace;
+	white-space: pre;
+}
+#heartbeat {
+	width: 5.5rem;
+	height: 5.5rem;
+	position: absolute;
+	left: 0;
+	top: 0;
+	text-align: center;
+	line-height: 5.5rem;
+	font-size: 5.5em;
+	color: #ff4040;
+	transition: font-size 0.25s;
+	-webkit-transition: font-size 0.25s;
+}
+#heartbeat.on {
+	font-size: 3.5em;
+}
+#uptime {
+	font-family: 'Consolas', monospace;
+	padding-top: 0;
+}
