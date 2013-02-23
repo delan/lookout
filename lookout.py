@@ -2,6 +2,9 @@ import flask
 app = flask.Flask(__name__)
 
 import sys, time, psutil, json, socket
+from tornado.wsgi import WSGIContainer
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
 
 @app.route('/')
 def hello():
@@ -16,4 +19,6 @@ def raw():
 	return flask.Response(o, mimetype='application/json')
 
 if __name__ == '__main__':
-	print 'To start Lookout, please run start.py.'
+	server = HTTPServer(WSGIContainer(app))
+	server.listen(80)
+	IOLoop.instance().start()
