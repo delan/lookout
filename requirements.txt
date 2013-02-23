@@ -1,4 +1,3 @@
 Flask==0.9
-#WMI==1.4.9
-#pywin32==218
+tornado==2.4.1
 psutil==0.6.1

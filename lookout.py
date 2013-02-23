@@ -16,10 +16,4 @@ def raw():
 	return flask.Response(o, mimetype='application/json')
 
 if __name__ == '__main__':
-	host = '::'
-	port = 9797
-	if len(sys.argv) >= 3:
-		host = sys.argv[2]
-	if len(sys.argv) >= 2:
-		port = int(sys.argv[1])
-	app.run(host=host, port=port)
+	print 'To start Lookout, please run start.py.'
