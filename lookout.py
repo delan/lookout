@@ -14,7 +14,9 @@ def hello():
 def raw():
 	o = json.dumps({
 		'uptime':	time.time() - psutil.BOOT_TIME,
-		'fqdn':		socket.getfqdn()
+		'fqdn':		socket.getfqdn(),
+		'cpuusage':	psutil.cpu_percent(0, True),
+		'ramusage':	psutil.virtual_memory()
 	})
 	return flask.Response(o, mimetype='application/json')
 
