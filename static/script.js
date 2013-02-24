@@ -119,11 +119,19 @@
 	function graph(name, percentage) {
 		var options = percentage ? {
 			millisPerPixel: 100,
+			grid: {
+				fillStyle: 'rgba(32, 32, 32, 1)',
+				strokeStyle: 'rgba(0, 0, 0, 0)'
+			},
 			minValue: 0,
 			maxValue: 100,
 			labels: { fillStyle: 'rgba(0, 0, 0, 0)' }
 		} : {
-			millisPerPixel: 100
+			millisPerPixel: 100,
+			grid: {
+				fillStyle: 'rgba(32, 32, 32, 1)',
+				strokeStyle: 'rgba(0, 0, 0, 0)'
+			}
 		};
 		var ts_options = {
 			strokeStyle: 'rgba(255, 64, 64, 1)'
