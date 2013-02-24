@@ -20,7 +20,7 @@ def raw():
 	disktotal = 0
 	for i in psutil.disk_partitions():
 		try:
-			x = psutil.disk_usage(i.device)
+			x = psutil.disk_usage(i.mountpoint)
 			diskused += x.used
 			disktotal += x.total
 		except OSError:
