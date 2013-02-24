@@ -1,4 +1,5 @@
 (function() {
+	var g = {}; // graphs
 	var u = {}; // utility functions
 	u.padt = function(s) {
 		return ('00' + s).slice(-2);
@@ -32,11 +33,11 @@
 	};
 	h.cpuusage = function(n) {
 		$('#cpuusage').text(u.percent(n));
-		c_cpuusage_l.append(+new Date, n);
+		g.cpuusage.t.append(+new Date, n);
 	};
 	h.ramusage = function(n) {
 		$('#ramusage').text(u.bytes(n[0] - n[1]));
-		c_ramusage_l.append(+new Date, n[2]);
+		g.ramusage.t.append(+new Date, n[2]);
 	};
 	h.diskio = function(n) {
 		$('#diskr').text(u.bytes(n[2], 1));
@@ -46,8 +47,8 @@
 			var ws = n[3] - (h.diskio.lastw || 0);
 			$('#diskrs').text(u.bytes(rs, 1) + '/s');
 			$('#diskws').text(u.bytes(ws, 1) + '/s');
-			c_diskrs_l.append(+new Date, rs / 1048576);
-			c_diskws_l.append(+new Date, ws / 1048576);
+			g.diskrs.t.append(+new Date, rs / 1048576);
+			g.diskws.t.append(+new Date, ws / 1048576);
 		}
 		h.diskio.lastr = n[2];
 		h.diskio.lastw = n[3];
@@ -55,6 +56,20 @@
 	h.diskusage = function(n) {
 		$('#disku').text(u.bytes(n[0], 1));
 		$('#diskt').text(u.bytes(n[1], 1));
+	};
+	h.netio = function(n) {
+		$('#nett').text(u.bytes(n[0], 1));
+		$('#netr').text(u.bytes(n[1], 1));
+		if (h.netio.lastt != undefined) {
+			var ts = n[0] - (h.netio.lastt || 0);
+			var rs = n[1] - (h.netio.lastr || 0);
+			$('#netts').text(u.bytes(ts, 1) + '/s');
+			$('#netrs').text(u.bytes(rs, 1) + '/s');
+			g.netts.t.append(+new Date, ts / 1048576);
+			g.netrs.t.append(+new Date, rs / 1048576);
+		}
+		h.netio.lastt = n[0];
+		h.netio.lastr = n[1];
 	};
 	var count = 0, errors = 0;
 	var latency = 0;
@@ -86,7 +101,7 @@
 	}
 	function update() {
 		$('#latency').text(latency + ' ms');
-		c_latency_l.append(+new Date, latency);
+		g.latency.t.append(+new Date, latency);
 		$('#requests').text(count + '/' + errors);
 	}
 	function heartbeaton() {
@@ -101,42 +116,30 @@
 		update();
 		setTimeout(ping, wait);
 	}
+	function graph(name, percentage) {
+		var options = percentage ? {
+			millisPerPixel: 100
+		} : {
+			millisPerPixel: 100,
+			minValue: 0,
+			maxValue: 100,
+			labels: { fillStyle: 'rgba(0, 0, 0, 0)' }
+		};
+		var ts_options = {
+			strokeStyle: 'rgba(255, 64, 64, 1)'
+		};
+		g[name] = {
+			c: new SmoothieChart(options)
+		};
+		g[name].c.streamTo($('#c_' + name)[0], 1000);
+		g[name].t = new TimeSeries();
+		g[name].c.addTimeSeries(g[name].t, ts_options);
+	}
 	$.ajaxSetup({
 		timeout: 5000,
 		error: error
 	});
-	var smoothie_options = {
-		millisPerPixel: 100
-	};
-	var percent_options = {
-		millisPerPixel: 100,
-		minValue: 0,
-		maxValue: 100,
-		labels: { fillStyle: 'rgba(0, 0, 0, 0)' }
-	};
-	var ts_options = {
-		// fillStyle: 'rgba(255, 64, 64, 0.2)',
-		strokeStyle: 'rgba(255, 64, 64, 1)'
-	};
-	var c_latency = new SmoothieChart(smoothie_options);
-	c_latency.streamTo($('#c_latency')[0], 1000);
-	var c_latency_l = new TimeSeries();
-	c_latency.addTimeSeries(c_latency_l, ts_options);
-	var c_cpuusage = new SmoothieChart(percent_options);
-	c_cpuusage.streamTo($('#c_cpuusage')[0], 1000);
-	var c_cpuusage_l = new TimeSeries();
-	c_cpuusage.addTimeSeries(c_cpuusage_l, ts_options);
-	var c_ramusage = new SmoothieChart(percent_options);
-	c_ramusage.streamTo($('#c_ramusage')[0], 1000);
-	var c_ramusage_l = new TimeSeries();
-	c_ramusage.addTimeSeries(c_ramusage_l, ts_options);
-	var c_diskrs = new SmoothieChart(smoothie_options);
-	c_diskrs.streamTo($('#c_diskrs')[0], 1000);
-	var c_diskrs_l = new TimeSeries();
-	c_diskrs.addTimeSeries(c_diskrs_l, ts_options);
-	var c_diskws = new SmoothieChart(smoothie_options);
-	c_diskws.streamTo($('#c_diskws')[0], 1000);
-	var c_diskws_l = new TimeSeries();
-	c_diskws.addTimeSeries(c_diskws_l, ts_options);
+	['latency', 'cpuusage', 'ramusage', 'diskrs', 'diskws', 'netts',
+		'netrs'].forEach(graph);
 	ping();
 })();

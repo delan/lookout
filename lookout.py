@@ -31,7 +31,8 @@ def raw():
 		'cpuusage':	psutil.cpu_percent(0),
 		'ramusage':	psutil.virtual_memory(),
 		'diskio':	psutil.disk_io_counters(),
-		'diskusage':	[diskused, disktotal]
+		'diskusage':	[diskused, disktotal],
+		'netio':	psutil.network_io_counters()
 	})
 	return flask.Response(o, mimetype='application/json')
 
