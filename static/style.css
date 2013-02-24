@@ -16,6 +16,11 @@ body {
 	outline: 1px solid #606060;
 	font-size: 0.75em;
 }
+.module .graph {
+	clear: both;
+	padding-top: 0.25rem;
+	text-align: center;
+}
 .module .value {
 	overflow: hidden;
 	white-space: nowrap;
@@ -35,10 +40,13 @@ body {
 .module.yesgraph .value {
 	float: right;
 }
-.module .graph {
-	clear: both;
-	padding-top: 0.25rem;
+.module.twovalues .title {
 	text-align: center;
+}
+.module.twovalues .value {
+	text-align: center;
+	padding-top: 0.25rem;
+	font-size: 1rem;
 }
 #heartbeat {
 	width: 5.5rem;

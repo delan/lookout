@@ -41,6 +41,20 @@
 		$('#ramusage').text(u.bytes(n[0] - n[1]));
 		c_ramusage_l.append(+new Date, n[2]);
 	};
+	h.diskio = function(n) {
+		$('#diskr').text(u.bytes(n[2]));
+		$('#diskw').text(u.bytes(n[3]));
+		if (h.diskio.lastr != undefined) {
+			var rs = n[2] - (h.diskio.lastr || 0);
+			var ws = n[3] - (h.diskio.lastw || 0);
+			$('#diskrs').text(u.bytes(rs) + '/s');
+			$('#diskws').text(u.bytes(ws) + '/s');
+			c_diskrs_l.append(+new Date, rs / 1048576);
+			c_diskws_l.append(+new Date, ws / 1048576);
+		}
+		h.diskio.lastr = n[2];
+		h.diskio.lastw = n[3];
+	};
 	var count = 0, errors = 0;
 	var latency = 0;
 	var wait = 1000;
@@ -115,5 +129,13 @@
 	c_ramusage.streamTo($('#c_ramusage')[0], 1000);
 	var c_ramusage_l = new TimeSeries();
 	c_ramusage.addTimeSeries(c_ramusage_l, ts_options);
+	var c_diskrs = new SmoothieChart(smoothie_options);
+	c_diskrs.streamTo($('#c_diskrs')[0], 1000);
+	var c_diskrs_l = new TimeSeries();
+	c_diskrs.addTimeSeries(c_diskrs_l, ts_options);
+	var c_diskws = new SmoothieChart(smoothie_options);
+	c_diskws.streamTo($('#c_diskws')[0], 1000);
+	var c_diskws_l = new TimeSeries();
+	c_diskws.addTimeSeries(c_diskws_l, ts_options);
 	ping();
 })();

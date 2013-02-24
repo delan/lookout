@@ -20,7 +20,8 @@ def raw():
 		'uptime':	time.time() - psutil.BOOT_TIME,
 		'fqdn':		socket.getfqdn(),
 		'cpuusage':	psutil.cpu_percent(0),
-		'ramusage':	psutil.virtual_memory()
+		'ramusage':	psutil.virtual_memory(),
+		'diskio':	psutil.disk_io_counters()
 	})
 	return flask.Response(o, mimetype='application/json')
 
