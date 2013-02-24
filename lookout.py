@@ -16,12 +16,22 @@ def hello():
 
 @app.route('/raw')
 def raw():
+	diskused = 0
+	disktotal = 0
+	for i in psutil.disk_partitions():
+		try:
+			x = psutil.disk_usage(i.device)
+			diskused += x.used
+			disktotal += x.total
+		except OSError:
+			pass
 	o = json.dumps({
 		'uptime':	time.time() - psutil.BOOT_TIME,
 		'fqdn':		socket.getfqdn(),
 		'cpuusage':	psutil.cpu_percent(0),
 		'ramusage':	psutil.virtual_memory(),
-		'diskio':	psutil.disk_io_counters()
+		'diskio':	psutil.disk_io_counters(),
+		'diskusage':	[diskused, disktotal]
 	})
 	return flask.Response(o, mimetype='application/json')
 

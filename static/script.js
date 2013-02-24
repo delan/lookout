@@ -10,18 +10,15 @@
 		var s = Math.floor(n) % 60;
 		return [d, u.padt(h), u.padt(m), u.padt(s)].join(':');
 	};
-	u.bytes = function(n) {
-		if (n > Math.pow(2, 50))
-			return (n / Math.pow(2, 50)).toFixed(2) + ' PiB';
-		if (n > Math.pow(2, 40))
-			return (n / Math.pow(2, 40)).toFixed(2) + ' TiB';
-		if (n > Math.pow(2, 30))
-			return (n / Math.pow(2, 30)).toFixed(2) + ' GiB';
-		if (n > Math.pow(2, 20))
-			return (n / Math.pow(2, 20)).toFixed(2) + ' MiB';
-		if (n > Math.pow(2, 10))
-			return (n / Math.pow(2, 10)).toFixed(2) + ' KiB';
-		return n + ' B';
+	u.bytes = function(n, decimal) {
+		var base = decimal ? 10 : 2;
+		var exp = decimal ? 3 : 10;
+		var units = decimal ? ['B', 'KB', 'MB', 'GB', 'TB', 'PB'] :
+		                      ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+		for (i = 5; i >= 0; i--)
+			if (n >= Math.pow(base, i * exp) - 1)
+				return (n / Math.pow(base, i * exp)).
+					toFixed(2) + ' ' + units[i];
 	};
 	u.percent = function(n) {
 		return n.toFixed(1) + '%';
@@ -42,18 +39,22 @@
 		c_ramusage_l.append(+new Date, n[2]);
 	};
 	h.diskio = function(n) {
-		$('#diskr').text(u.bytes(n[2]));
-		$('#diskw').text(u.bytes(n[3]));
+		$('#diskr').text(u.bytes(n[2], 1));
+		$('#diskw').text(u.bytes(n[3], 1));
 		if (h.diskio.lastr != undefined) {
 			var rs = n[2] - (h.diskio.lastr || 0);
 			var ws = n[3] - (h.diskio.lastw || 0);
-			$('#diskrs').text(u.bytes(rs) + '/s');
-			$('#diskws').text(u.bytes(ws) + '/s');
+			$('#diskrs').text(u.bytes(rs, 1) + '/s');
+			$('#diskws').text(u.bytes(ws, 1) + '/s');
 			c_diskrs_l.append(+new Date, rs / 1048576);
 			c_diskws_l.append(+new Date, ws / 1048576);
 		}
 		h.diskio.lastr = n[2];
 		h.diskio.lastw = n[3];
+	};
+	h.diskusage = function(n) {
+		$('#disku').text(u.bytes(n[0], 1));
+		$('#diskt').text(u.bytes(n[1], 1));
 	};
 	var count = 0, errors = 0;
 	var latency = 0;
