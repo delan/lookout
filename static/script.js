@@ -38,7 +38,7 @@
 		c_cpuusage_l.append(+new Date, n);
 	};
 	h.ramusage = function(n) {
-		$('#ramusage').text(u.bytes(n[3]));
+		$('#ramusage').text(u.bytes(n[0] - n[1]));
 		c_ramusage_l.append(+new Date, n[2]);
 	};
 	var count = 0, errors = 0;
