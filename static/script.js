@@ -118,12 +118,12 @@
 	}
 	function graph(name, percentage) {
 		var options = percentage ? {
-			millisPerPixel: 100
-		} : {
 			millisPerPixel: 100,
 			minValue: 0,
 			maxValue: 100,
 			labels: { fillStyle: 'rgba(0, 0, 0, 0)' }
+		} : {
+			millisPerPixel: 100
 		};
 		var ts_options = {
 			strokeStyle: 'rgba(255, 64, 64, 1)'
@@ -139,7 +139,16 @@
 		timeout: 5000,
 		error: error
 	});
-	['latency', 'cpuusage', 'ramusage', 'diskrs', 'diskws', 'netts',
-		'netrs'].forEach(graph);
+	var graphlist = {
+		latency: 0,
+		cpuusage: 1,
+		ramusage: 1,
+		diskrs: 0,
+		diskws: 0,
+		netts: 0,
+		netrs: 0
+	};
+	for (var i in graphlist)
+		graph(i, graphlist[i]);
 	ping();
 })();
