@@ -71,6 +71,10 @@
 		h.netio.lastt = n[0];
 		h.netio.lastr = n[1];
 	};
+	h.swapusage = function(n) {
+		$('#swapusage').text(u.bytes(n[1]));
+		g.swapusage.t.append(+new Date, n[3]);
+	};
 	var count = 0, errors = 0;
 	var latency = 0;
 	var wait = 1000;
@@ -154,7 +158,8 @@
 		diskrs: 0,
 		diskws: 0,
 		netts: 0,
-		netrs: 0
+		netrs: 0,
+		swapusage: 1
 	};
 	for (var i in graphlist)
 		graph(i, graphlist[i]);

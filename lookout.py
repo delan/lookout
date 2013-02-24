@@ -32,7 +32,8 @@ def raw():
 		'ramusage':	psutil.virtual_memory(),
 		'diskio':	psutil.disk_io_counters(),
 		'diskusage':	[diskused, disktotal],
-		'netio':	psutil.network_io_counters()
+		'netio':	psutil.network_io_counters(),
+		'swapusage':	psutil.swap_memory()
 	})
 	return flask.Response(o, mimetype='application/json')
 
