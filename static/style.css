@@ -6,28 +6,39 @@ body {
 	color: #c0c0c0;
 	font-family: 'Segoe UI', sans-serif;
 }
-h1 {
-	text-align: right;
+.module {
+	display: inline-block;
+	width: 8rem;
+	height: 5rem;
+	margin: 0.25rem;
+	padding: 0.25rem;
+	vertical-align: top;
+	outline: 1px solid #606060;
+	font-size: 0.75em;
+}
+.module .value {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.module.nograph .title {
+	text-align: center;
+}
+.module.nograph .value {
+	text-align: center;
+	padding-top: 0.5em;
 	font-size: 2em;
-	margin: 0;
-	padding: 0.25em;
 }
-table {
-	border-collapse: collapse;
-	table-layout: fixed;
-	width: 100%;
+.module.yesgraph .title {
+	float: left;
 }
-th, td {
-	border: 1px solid #808080;
-	padding: 0.25em;
+.module.yesgraph .value {
+	float: right;
 }
-th {
-	text-align: left;
-}
-td {
-	text-align: right;
-	font-family: 'Consolas', monospace;
-	white-space: pre;
+.module .graph {
+	clear: both;
+	padding-top: 0.25rem;
+	text-align: center;
 }
 #heartbeat {
 	width: 5.5rem;
@@ -44,6 +55,11 @@ td {
 }
 #heartbeat.on {
 	font-size: 3.5em;
+}
+#fqdn, #uptime {
+	text-align: right;
+	font-size: 2em;
+	padding: 0.25em;
 }
 #uptime {
 	font-family: 'Consolas', monospace;

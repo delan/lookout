@@ -1,18 +1,48 @@
 (function() {
-	var transforms = {
-		uptime: td2str,
-		cpuusage: function(a) {
-			return a.map(pc2str).map(padpc).join(' ');
-		},
-		ramusage: function(a) {
-			var x = b2str(a[1]);
-			var y = b2str(a[0]);
-			var p = pc2str(a[2]);
-			return x + '/' + y + ' (' + p + ')';
-		},
+	var u = {}; // utility functions
+	u.padt = function(s) {
+		return ('00' + s).slice(-2);
 	};
-	var count = 0, count_err = 0;
-	var avglat = 0;
+	u.seconds = function(n) {
+		var d = Math.floor(n / 86400);
+		var h = Math.floor(n / 3600) % 24;
+		var m = Math.floor(n / 60) % 60;
+		var s = Math.floor(n) % 60;
+		return [d, u.padt(h), u.padt(m), u.padt(s)].join(':');
+	};
+	u.bytes = function(n) {
+		if (n > Math.pow(2, 50))
+			return (n / Math.pow(2, 50)).toFixed(2) + ' PiB';
+		if (n > Math.pow(2, 40))
+			return (n / Math.pow(2, 40)).toFixed(2) + ' TiB';
+		if (n > Math.pow(2, 30))
+			return (n / Math.pow(2, 30)).toFixed(2) + ' GiB';
+		if (n > Math.pow(2, 20))
+			return (n / Math.pow(2, 20)).toFixed(2) + ' MiB';
+		if (n > Math.pow(2, 10))
+			return (n / Math.pow(2, 10)).toFixed(2) + ' KiB';
+		return n + ' B';
+	};
+	u.percent = function(n) {
+		return n.toFixed(1) + '%';
+	};
+	var h = {}; // data handlers
+	h.fqdn = function(s) {
+		$('#fqdn').text(s);
+	};
+	h.uptime = function(n) {
+		$('#uptime').text(u.seconds(n));
+	};
+	h.cpuusage = function(n) {
+		$('#cpuusage').text(u.percent(n));
+		c_cpuusage_l.append(+new Date, n);
+	};
+	h.ramusage = function(n) {
+		$('#ramusage').text(u.bytes(n[1]) + '/' + u.bytes(n[0]));
+		c_ramusage_l.append(+new Date, n[2]);
+	};
+	var count = 0, errors = 0;
+	var latency = 0;
 	var wait = 1000;
 	var margin = 250;
 	function ping() {
@@ -21,12 +51,11 @@
 		$.get('raw', function(data) {
 			document.title = data.fqdn;
 			for (var i in data)
-				$('#' + i).text(transforms[i] ?
-					transforms[i](data[i]) : data[i]);
+				h[i] && h[i](data[i]);
 			// compensate for request time while allowing time for
 			// the heartbeat transitions to complete
-			var t = new Date - time;
-			avglat = (avglat * count + t) / ++count;
+			var t = latency = new Date - time;
+			++count;
 			update();
 			if (t <= margin) {
 				setTimeout(heartbeatoff, margin - t);
@@ -41,8 +70,9 @@
 		});
 	}
 	function update() {
-		$('#avglat').text(avglat.toFixed(2) + ' ms');
-		$('#requests').text(count + ' (' + count_err + ')');
+		$('#latency').text(latency + ' ms');
+		c_latency_l.append(+new Date, latency);
+		$('#requests').text(count + '/' + errors);
 	}
 	function heartbeaton() {
 		$('#heartbeat').addClass('on');
@@ -51,44 +81,39 @@
 		$('#heartbeat').removeClass('on');
 	}
 	function error() {
-		++count_err;
+		++errors;
 		$('#uptime').text('OFFLINE');
 		update();
 		setTimeout(ping, wait);
-	}
-	function pad(string) {
-		return ('00' + string).slice(-2);
-	}
-	function padpc(string) {
-		//      'abc.d%'
-		return ('      ' + string).slice(-6);
-	}
-	function td2str(seconds) {
-		var d = Math.floor(seconds / 86400);
-		var h = Math.floor(seconds / 3600) % 24;
-		var m = Math.floor(seconds / 60) % 60;
-		var s = Math.floor(seconds) % 60;
-		return [d, pad(h), pad(m), pad(s)].join(':');
-	}
-	function pc2str(percentage) {
-		return percentage + '%';
-	}
-	function b2str(bytes) {
-		if (bytes > Math.pow(2, 50))
-			return (bytes / Math.pow(2, 50)).toFixed(2) + ' PiB';
-		if (bytes > Math.pow(2, 40))
-			return (bytes / Math.pow(2, 40)).toFixed(2) + ' TiB';
-		if (bytes > Math.pow(2, 30))
-			return (bytes / Math.pow(2, 30)).toFixed(2) + ' GiB';
-		if (bytes > Math.pow(2, 20))
-			return (bytes / Math.pow(2, 20)).toFixed(2) + ' MiB';
-		if (bytes > Math.pow(2, 10))
-			return (bytes / Math.pow(2, 10)).toFixed(2) + ' KiB';
-		return bytes + ' B';
 	}
 	$.ajaxSetup({
 		timeout: 5000,
 		error: error
 	});
+	var smoothie_options = {
+		millisPerPixel: 100
+	};
+	var percent_options = {
+		millisPerPixel: 100,
+		minValue: 0,
+		maxValue: 100,
+		labels: { fillStyle: 'rgba(0, 0, 0, 0)' }
+	};
+	var ts_options = {
+		// fillStyle: 'rgba(255, 64, 64, 0.2)',
+		strokeStyle: 'rgba(255, 64, 64, 1)'
+	};
+	var c_latency = new SmoothieChart(smoothie_options);
+	c_latency.streamTo($('#c_latency')[0], 1000);
+	var c_latency_l = new TimeSeries();
+	c_latency.addTimeSeries(c_latency_l, ts_options);
+	var c_cpuusage = new SmoothieChart(percent_options);
+	c_cpuusage.streamTo($('#c_cpuusage')[0], 1000);
+	var c_cpuusage_l = new TimeSeries();
+	c_cpuusage.addTimeSeries(c_cpuusage_l, ts_options);
+	var c_ramusage = new SmoothieChart(percent_options);
+	c_ramusage.streamTo($('#c_ramusage')[0], 1000);
+	var c_ramusage_l = new TimeSeries();
+	c_ramusage.addTimeSeries(c_ramusage_l, ts_options);
 	ping();
 })();
