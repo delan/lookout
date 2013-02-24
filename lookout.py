@@ -1,10 +1,14 @@
-import flask
-app = flask.Flask(__name__)
-
-import sys, time, psutil, json, socket
+import flask, os, sys, time, psutil, json, socket
 from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
+
+if getattr(sys, 'frozen', None):
+	basedir = sys._MEIPASS
+else:
+	basedir = os.path.dirname(__file__)
+
+app = flask.Flask(__name__, static_folder=os.path.join(basedir, 'static'))
 
 @app.route('/')
 def hello():
