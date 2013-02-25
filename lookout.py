@@ -9,6 +9,7 @@ else:
 	basedir = os.path.dirname(__file__)
 
 app = flask.Flask(__name__, static_folder=os.path.join(basedir, 'static'))
+PORT = 80
 
 @app.route('/')
 def hello():
@@ -38,6 +39,9 @@ def raw():
 	return flask.Response(o, mimetype='application/json')
 
 if __name__ == '__main__':
+	if len(sys.argv) > 1:
+		PORT = sys.argv[1]
 	server = HTTPServer(WSGIContainer(app))
-	server.listen(80)
+	print 'Now listening on port ' + str(PORT)
+	server.listen(PORT)
 	IOLoop.instance().start()

@@ -1,15 +1,35 @@
-Run `lookout.py` to start the monitoring server. By default, the monitor will be
-accessible on port 80 from any interface. On Linux, this is a privileged port so
-you will need to run it as root.
+Lookout
+=======
 
-Windows users, install python, pip and MSVC++ 2008.
+Lightweight, web-based server monitoring.
 
-Linux users, install the following packages or their equivalents:
+The Python backend uses Flask and Tornado to serve JSON data thanks to psutil,
+while the frontend uses Smoothie Charts for the live graphs.
 
-	build-essential python python-dev python-pip
+Running directly from source
+----------------------------
 
-Using pyinstaller to create a standalone executable:
+To run Lookout from source, install Python 2.7, pip and a C compiler. Windows
+users should use MSVC++ 2008 (not even a newer version) for the least headaches.
 
-1. delete or rename werkzeug's `__init__.py` to disable the broken import magic
-2. run `path/to/pyinstaller/pyinstaller.py -F lookout.spec`
-3. executable will be found in the `dist` directory
+Then install dependencies with `pip install -r requirements.txt`.
+
+Finally, run `lookout.py` to start monitoring. You can optionally supply the
+port to listen on as the first argument (e.g. `lookout.py 8080`), but the
+default is port 80.
+
+Skype users, please note that port 80 and 443 are taken by default; you will
+need to turn off "Use 80 and 443 for incoming connections" and restart Skype to
+use those ports.
+
+How to build a standalone executable
+------------------------------------
+
+Werkzeug does some crazy import magic that breaks PyInstaller's module
+detection, so please rename or delete werkzeug's `__init__.py` to disable this.
+
+Download PyInstaller and in this directory, run
+`path/to/pyinstaller.py -F lookout.spec`.
+
+The resulting executable will be found as `dist/lookout.exe`. Run it to start
+monitoring, again with an optional port argument.
