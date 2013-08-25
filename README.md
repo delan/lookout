@@ -11,6 +11,13 @@ What does it look like?
 
 ![screenshot](http://i.imgur.com/X3RD0LV.png)
 
+Windows Server 2012 users
+-------------------------
+
+Please run `diskperf -y` to enable disk activity monitoring. Without doing so,
+psutil and lookout will fail to run properly. As a side effect, doing so allows
+you to also view disk activity in Task Manager.
+
 Running directly from source
 ----------------------------
 
