@@ -39,7 +39,8 @@ How to build a standalone executable
 ------------------------------------
 
 Werkzeug does some crazy import magic that breaks PyInstaller's module
-detection, so please rename or delete werkzeug's `__init__.py` to disable this.
+detection, so please edit werkzeug's `__init__.py` and remove everything after
+the line where `__version__` is defined.
 
 Download PyInstaller and in this directory, run
 `path/to/pyinstaller.py -F lookout.spec`.
