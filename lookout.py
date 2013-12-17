@@ -5,16 +5,16 @@ from tornado.wsgi import WSGIContainer
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 
-#if getattr(sys, 'frozen', None):
-#	basedir = sys._MEIPASS
-#else:
-#	basedir = os.path.dirname(__file__)
+if getattr(sys, 'frozen', None):
+	static = os.path.join(sys._MEIPASS, 'static')
+else:
+	static = 'static'
 
-app = flask.Flask(__name__, static_folder='static')
+app = flask.Flask(__name__, static_folder=static)
 PORT = 80
 
 @app.route('/')
-def hello():
+def frontend():
 	return flask.send_from_directory(app.static_folder, 'index.html')
 
 @app.route('/raw')
