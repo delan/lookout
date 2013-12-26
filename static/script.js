@@ -16,9 +16,15 @@
 		var exp = decimal ? 3 : 10;
 		var units = decimal ? ['B', 'KB', 'MB', 'GB', 'TB', 'PB'] :
 		                      ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+		if (n < 0) {
+			n = -n;
+			s = '-';
+		} else {
+			s = '';
+		}
 		for (i = 5; i >= 0; i--)
 			if (n >= Math.pow(base, i * exp) - 1)
-				return (n / Math.pow(base, i * exp)).
+				return s + (n / Math.pow(base, i * exp)).
 					toFixed(2) + ' ' + units[i];
 	};
 	u.percent = function(n) {
