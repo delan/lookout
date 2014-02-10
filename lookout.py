@@ -11,7 +11,7 @@ else:
 	static = 'static'
 
 app = flask.Flask(__name__, static_folder=static)
-PORT = 80
+PORT = 9890
 
 @app.route('/')
 def frontend():
