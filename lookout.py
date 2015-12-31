@@ -37,7 +37,7 @@ def update(stats):
 				disktotal += x.total
 			except OSError:
 				pass
-		stats['uptime'] = time.time() - psutil.BOOT_TIME
+		stats['uptime'] = time.time() - psutil.boot_time()
 		stats['fqdn'] = socket.gethostname()
 		stats['cpuusage'] = psutil.cpu_percent(0)
 		stats['ramusage'] = psutil.virtual_memory()
